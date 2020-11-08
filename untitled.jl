@@ -66,7 +66,7 @@ end
 # set up a mixed population
 # p_contact is the probability that two agents are connected
 function setup_mixed(n, p_contact)
-    pop = [ Person() for i=1:n ]
+    pop = [ Person() for i=1:n ] #Person = Migrant or native
     # go through all combinations of agents and 
     # check if they are connected
     # TO DO this should be only people of the same nationality
