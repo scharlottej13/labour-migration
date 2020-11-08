@@ -26,10 +26,10 @@ mutable struct ComplexHuman
     migrant :: Bool
     # whether they are employed
     employed :: Bool
-    # TO DO need function that sets industry to NA if employed is false
+    # TO DO need function that sets industry to NA if employed is false --> NO, defined in population definition function
     industry :: Industry
     # which country are they from
-    # TO DO if migrant is false, then Nationality is only one country (whichever we decide, eg. Germany)
+    # TO DO if migrant is false, then Nationality is only one country (whichever we decide, eg. Germany) --> NO, defined in population definition function
     nationality :: Nationality
     # number of people in their "network"
     contacts :: Vector{ComplexHuman}
@@ -38,7 +38,8 @@ end
 # the first people are Swedish immigrants, employed, working on cars, with no network
 migrant = ComplexHuman(true, true, Automotive, Sweden, [])
 native = ComplexHuman(false, true, Hospital_HealthCare, Germany,[])
-#TO DO
+
+#TO DO -- ASK MARTIN
 #write some function to assign randomly agents according to a distribution to different job sectors and different employment status.
 
 # this should change to something like a dictionary in python
