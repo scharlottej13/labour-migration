@@ -82,3 +82,6 @@ function setup_mixed(n, p_contact)
 
     pop
 end
+
+
+#allow/code some random element that permits immigrant agents to be employed in different sectors than the ones in wihich the majority of network is currently employed
