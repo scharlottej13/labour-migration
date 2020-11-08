@@ -11,6 +11,10 @@
 # or maybe people go *only* if there is a job
 # or maybe you need both?
 
+#FINAL CODE:
+#some individuals are already mingrated and are already employed in some defined job sectors
+
+
 # used a list of EU countries
 @enum Nationality Austria Italy Belgium Latvia Bulgaria Lithuania Croatia Luxembourg Cyprus Malta Czechia Netherlands Denmark Poland Estonia Portugal Finland Romania France Slovakia Germany Slovenia Greece Spain Hungary Sweden
 
