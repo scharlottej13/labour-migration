@@ -37,7 +37,7 @@ end
 
 # the first people are Swedish immigrants, employed, working on cars, with no network
 migrant = ComplexHuman(true, true, Automotive, Sweden, [])
-native = ComplexHuman(false, true, Hospital_HealthCare, Bulgaria,[])
+native = ComplexHuman(false, true, Hospital_HealthCare, Germany,[])
 #TO DO
 #write some function to assign randomly agents according to a distribution to different job sectors and different employment status.
 
