@@ -29,6 +29,7 @@ mutable struct ComplexHuman
     # TO DO need function that sets industry to NA if employed is false
     industry :: Industry
     # which country are they from
+    # TO DO if migrant is false, then Nationality is only one country (whichever we decide, eg. Germany)
     nationality :: Nationality
     # number of people in their "network"
     contacts :: Vector{ComplexHuman}
