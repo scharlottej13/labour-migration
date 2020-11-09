@@ -1,18 +1,12 @@
-# At the start of the simulation, our we have some "stock" of immigrants in the destination country
-# as time progresses, agents decide whether or not to move based on the job market,
-# and the number of other immigrants they know in the destination country
-
-# OR
-# at the start, this is a world without migration
-# people decide to migrate based on the job market (if their skills match the jobs available)
-# then, once there are immigrants, others deciding whether to migrate
-# can rely on the migrant network and/or job market
-# maybe people go regardless of work, just because of the network
-# or maybe people go *only* if there is a job
-# or maybe you need both?
-
-#FINAL CODE:
-#some individuals are already mingrated and are already employed in some defined job sectors
+# At the start of the simulation, we have some "stock" of immigrants in the destination country
+# they have some characteristics (job sector, nationality, etc.).
+# As time progresses, agents decide whether or not to migrate based on:
+# - the job market
+# - number of other immigrants they know in the destination country
+# Possible emergent outcomes:
+# - maybe people migrate regardless of the job, just because of the network
+# - or maybe people migrate *only* if there is a job
+# - or maybe you need both network & a job?
 
 
 # used a list of EU countries
@@ -26,17 +20,16 @@ mutable struct ComplexHuman
     migrant :: Bool
     # whether they are employed
     employed :: Bool
-    # TO DO need function that sets industry to NA if employed is false --> NO, defined in population definition function
     industry :: Industry
     # which country are they from
-    # TO DO if migrant is false, then Nationality is only one country (whichever we decide, eg. Germany) --> NO, defined in population definition function
     nationality :: Nationality
     # number of people in their "network"
     contacts :: Vector{ComplexHuman}
 end
 
-# the first people are Swedish immigrants, employed, working on cars, with no network
+# Swedish immigrants, employed, working on cars, with no network
 migrant = ComplexHuman(true, true, Automotive, Sweden, [])
+# German natives, working in Hospital/Health Care
 native = ComplexHuman(false, true, Hospital_HealthCare, Germany,[])
 
 #TO DO -- ASK MARTIN
@@ -52,7 +45,6 @@ end
 
 # and the job market ????
 # still a bit confused how these interact w/ each other
-high_tech = JobMarket(100000, Computer_Software)
 
 mutable struct Simulation{AGENT}
     # model parameters:
@@ -71,6 +63,7 @@ function setup_mixed(n, p_contact)
     # go through all combinations of agents and 
     # check if they are connected
     # TO DO this should be only people of the same nationality
+    # TO DO only those who are employed get to have an industry
     for i in eachindex(pop)
         for j in i+1:length(pop)
             if rand() < p_contact
