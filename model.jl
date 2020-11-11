@@ -29,6 +29,20 @@ end
 Person(x, y) = Person(susceptible, [], x, y)
 Person(state, x, y) = Person(state, [], x, y)
 
+
+
+## it's easier to implement with  different function for each status
+## wirte what will happen at each timestep and what the change is determined by
+
+## build a population: a vector of population objects and fill with population randomly generated or identical (add to a vector through push!(vector,element).
+## write an update function that modifies the agent a tiny bit in terms of properties -> loop it on all agents
+## go through all agents and one another to a contact list  (something like: 
+# for j in i+1:length(pop)
+#             if rand() < p_contact
+#                 push!(pop[i].contacts, pop[j])
+#                 push!(pop[j].contacts, pop[i])
+# end
+
 function update_migrant_status!()
     # is the agent in the origin or destination country?
 end
