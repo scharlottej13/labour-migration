@@ -11,9 +11,6 @@ mutable struct ComplexHuman
     migrant :: update_migrant_status!()
     employed :: Bool
     industry :: Industry()
-    nationality :: Nationality
-    # like this ^ ?
-    # or this:
     origin :: OriginCountry()
     dest :: DestinationCountry()
     contacts :: Vector{ComplexHuman}
@@ -60,12 +57,10 @@ end
 # visually, picture red circles on the left as natives who can migrate
 # and blue circles on the right as people who have already migrated
 # these are our two starting populations
-function setup_migrants(n, p_contact)
+function setup_population(n, p_contact)
     pop = [ ComplexHuman() for i=1:n ]
     # go through all combinations of agents and
     # check if they are connected
-    # TO DO this should be only people of the same nationality
-    # TO DO only those who are employed get to have an industry
     for i in eachindex(pop)
         for j in i+1:length(pop)
             if rand() < p_contact
