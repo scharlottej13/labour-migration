@@ -4,24 +4,25 @@
 using Random
 
 
+# Industry of employment (took the top 10 from LinkedIn)
+@enum Industry Information_Technology Hospital_HealthCare Construction Education_Management Retail Financial Accounting Computer_Software Automotive Higher_Education
+
 ### declare agent type(s)
 mutable struct ComplexHuman
-    migrant :: update_migrant_status!()
+    # var :: type
+    migrant :: Bool
     employed :: Bool
-    industry :: Industry()
-    origin :: OriginCountry()
-    dest :: DestinationCountry()
+    industry :: Int
+    origin :: Country
+    residence :: Country
     contacts :: Vector{ComplexHuman}
 end
 
 
-mutable struct OriginCountry
-    job_market :: JobMarketFunction{some_input}
-end
-
-
-mutable struct DestinationCountry
-    job_market :: JobMarketFunction{some_input}
+mutable struct Country
+    # this rate w/ be used in migration decision
+    migration_rate :: Float64
+    job_market :: Int
 end
 
 
@@ -50,8 +51,30 @@ mutable struct Simulation{AGENT}
     pop :: Vector{AGENT}
 end
 
+# hire & fire should be part of job market
+# define struct that is the job market that has rates
+# which are hire and fire
+# keep it simple, have one global job market
+mutable struct JobMarket
+    hire_rate :: Float64
+    fire_rate :: Float64
+end
 
 function update_migrant_status!(person, sim)
+    # CHANGE ALL OF THIS
+    # now it will be more about residence
+    # no more hiring/firing rate
+    # needs to know about destination countries
+    # how are destination countries selected (select as random to start)
+    # ok, so what happens when a migrant migrates
+    # migrant status
+    # country of residence
+    # anything else?
+    # migration decision means two things:
+    # change the state of the person
+    # change the country
+    # need to think about how to do this
+    
     # exit out if they are a migrant
     if person.migrant == true
         return
@@ -68,6 +91,12 @@ function update_migrant_status!(person, sim)
         person.migrant = true
     end
 end
+
+# will need this eventually, however, right now this is not a priority
+function update_labour_market!()
+end
+
+
 
 ## it's easier to implement with  different function for each status
 ## wirte what will happen at each timestep and what the change is determined by
@@ -99,4 +128,16 @@ function setup_population(n, p_contact)
     pop
 end
 
-
+# need a setup
+# create labour markets
+# population
+# all countries
+# assign agents to countries
+# assign properties to agents
+# assign properties to countries
+# add contacts to agents
+# return the simulation object
+# then the global update function (this will call all necessary updat f'ns)
+# need run function, this will print interesting information (relevant output?)
+# ignore spatial structure, create a mixed population
+# take N (number) of random agents as contacts
