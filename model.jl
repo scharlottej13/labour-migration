@@ -32,9 +32,18 @@ end
 
 
 function update_job_market!()
+    for i in length(pop):
+        if pop[i].employed == False
+            return
+        end
+        if pop[i].employed == True
+        Industry.num_jobs += 1
+        end 
     # needs to be like hey no more jobs
     # you can't get these jobs they're gone
 end
+end
+
 
 # what are our agents *doing*
 # they are migrating, being hired, being fired, and chatting w/ other migrants
@@ -59,7 +68,41 @@ mutable struct JobMarket
     hire_rate :: Float64
     fire_rate :: Float64
 end
+end
 
+
+function update_migrant_status!(person, sim)
+     if person.migrant == true
+        return
+    end
+    if person.migrant == false
+        if person.contacts >= #something...I'd like to check how many of contacts are employed. if greater then a certain amount THEN
+            person.migrant == true
+            person.residence == # lo stesso degli amichetti suoi
+        end
+    end
+end
+
+
+function update_migrant_employment!(person, sim)
+    if person.employed == true
+        return
+    end
+    if person.employed == false
+        if person.contacts # are employed in a certain jobmarket with a rate higher than a certain amount THEN
+            person.employed == true
+            person.industry == # lo stesso degli amichetti suoi
+        end
+    end
+    function update_labour_market!()
+end
+# WE HAVE TO ADD SOME RANDOMNESS IN THIS FUNCTION THO!
+
+
+
+
+    
+    
 function update_migrant_status!(person, sim)
     # CHANGE ALL OF THIS
     # now it will be more about residence
@@ -120,7 +163,7 @@ function setup_population(n, p_contact)
     for i in eachindex(pop)
         for j in i+1:length(pop)
             if rand() < p_contact
-                push!(pop[i].contacts, pop[j])
+                push!(pop[i].contacts, pop[j]) #this should turn into a for loop for each country
                 push!(pop[j].contacts, pop[i])
             end
         end
