@@ -33,10 +33,10 @@ end
 
 function update_job_market!()
     for i in length(pop):
-        if pop[i].employed == False
+        if pop[i].employed == false
             return
         end
-        if pop[i].employed == True
+        if pop[i].employed == true
         Industry.num_jobs += 1
         end 
     # needs to be like hey no more jobs
@@ -76,7 +76,8 @@ function update_migrant_status!(person, sim)
         return
     end
     if person.migrant == false
-        if person.contacts >= #something...I'd like to check how many of contacts are employed. if greater then a certain amount THEN
+        if person.contacts.migrant == true && person.contacts.employed >= "friends_employment_rate" && rand() < sim.commr
+#             ...I'd like to check how many of contacts are employed. if greater then a certain amount THEN
             person.migrant == true
             person.residence == # lo stesso degli amichetti suoi
         end
@@ -84,12 +85,14 @@ function update_migrant_status!(person, sim)
 end
 
 
+
 function update_migrant_employment!(person, sim)
     if person.employed == true
         return
     end
     if person.employed == false
-        if person.contacts # are employed in a certain jobmarket with a rate higher than a certain amount THEN
+        if person.contacts.migrant == true && person.contacts.employed == true && person.contacts.industry # are employed in a certain jobmarket with a rate higher than a certain amount THEN
+            if rand()< industry.hire.rate #same industry of his friends
             person.employed == true
             person.industry == # lo stesso degli amichetti suoi
         end
