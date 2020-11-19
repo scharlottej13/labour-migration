@@ -92,14 +92,13 @@ function update_migrant_employment!(person, sim)
     end
     if person.employed == false
         if person.contacts.migrant == true && person.contacts.employed == true && person.contacts.industry # are employed in a certain jobmarket with a rate higher than a certain amount THEN
-            if rand()< industry.hire.rate #same industry of his friends
+            if rand()< industry.hire.rate # same industry of his friends
             person.employed == true
-            person.industry == # lo stesso degli amichetti suoi
+            person.industry == # same industry of his friends
         end
     end
     function update_labour_market!()
 end
-# WE HAVE TO ADD SOME RANDOMNESS IN THIS FUNCTION THO!
 
 
 
