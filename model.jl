@@ -186,3 +186,4 @@ end
 # need run function, this will print interesting information (relevant output?)
 # ignore spatial structure, create a mixed population
 # take N (number) of random agents as contacts
+#test from git in jupyter
