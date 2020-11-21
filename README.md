@@ -1,8 +1,37 @@
 # labour-migration
-Part of ABM course for social scientists with University of Southampton
+Project for agent-based modeling course for social scientists with University of Southampton
 
-testing testing 1234
 
-## here I am makin' some changes
-it's Giacomo btw
->Nice, it worked! Now it will become funny when the stuff will have to be done in that very very fancy CSS-like style that is .ypnb
+## Migration and labour market
+Main question: Do people decide to migrate / how the decision to migrate is influenced by compatriot networks in foreign country
+
+### Decisions to take:
+    - migrate or not
+
+### Decision influence:
+    - % of compatriots empolyed in foreign country
+    - distance
+
+### Agent Characteristics:
+Our agents will enter the when they turn 18, and exit upon 65 or retirement (whichever comes first)
+    - employment status (unemployed, fully employed, part-time)
+    - age
+    - sex
+    - nationality
+    - current location
+
+### Agent Interactions:
+    - influence others in your network on migration decision
+        - e.g. come to this new place, it's great or no please do migrate
+
+### Time:
+Still in development, but we need time for:
+    - when agents interact with eachother (how long are you in a place before you influence your network)
+    - decision to migrate after interaction with other agents
+    - become employed or remain unemployed in some X amount of time
+    - some agents enter job market (turn 18 and start looking fo a job in home country or abroad) some other exit the market (turn 65 and retire)
+
+### Environment impacts:
+    - Physical distance between origin and destionation country
+    -Social (number of people in your network that already migrated)
+    -Economic environment (e.g. GDP, income per capita, overall unemployment rate)
