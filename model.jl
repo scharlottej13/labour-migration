@@ -1,15 +1,28 @@
-#   Copyright (C) 2020 Martin Hinsch <hinsch.martin@gmail.com>
-
-### include library code
 using Random
+using Plots
 
+mutable struct Industry
+    # number of jobs available
+    num_jobs :: Int
+    # job hire rate
+    hirer :: Float64
+    # rate of job loss
+    firer :: Float64
+end
 
-# Industry of employment (took the top 10 from LinkedIn)
-@enum Industry Information_Technology Hospital_HealthCare Construction Education_Management Retail Financial Accounting Computer_Software Automotive Higher_Education
+# no jobs, no one is hired, no one loses their job
+Industry() = Industry(0,0,0)
 
-### declare agent type(s)
+mutable struct Country
+    # could add contact
+    migration_rate :: Float64
+    industries :: Vector{Industry}
+end
+
+# no one migrates, no industries
+Country() = Country(0,[])
+
 mutable struct ComplexHuman
-    # var :: type
     migrant :: Bool
     employed :: Bool
     industry :: Int
@@ -18,154 +31,122 @@ mutable struct ComplexHuman
     contacts :: Vector{ComplexHuman}
 end
 
+ComplexHuman() = ComplexHuman(false, true, 1, Country(), Country(), [])
+ComplexHuman(country) = ComplexHuman(false, true, 1, country, country, [])
 
-mutable struct Country
-    # this rate w/ be used in migration decision
-    migration_rate :: Float64
-    job_market :: Int
-end
-
-
-mutable struct Industry
-    num_jobs :: num_jobs
-end
-
-
-function update_job_market!()
-    for i in length(pop):
-        if pop[i].employed == false
-            return
-        end
-        if pop[i].employed == true
-        Industry.num_jobs += 1
-        end 
-    # needs to be like hey no more jobs
-    # you can't get these jobs they're gone
-end
-end
-
-
-# what are our agents *doing*
-# they are migrating, being hired, being fired, and chatting w/ other migrants
-# for our population that has already migrated, their migration rate will be 0
-mutable struct Simulation{AGENT}
-    # model parameters:
-    # job hire rate
-    hirer :: Float64
-    # being fired
-    firer :: Float64
-    # communication rate
+mutable struct Simulation
+    countries :: Vector{Country}
+    # communication rate between agents
     commr :: Float64
     # and this is our population of agents
-    pop :: Vector{AGENT}
+    pop :: Vector{ComplexHuman}
 end
-
-# hire & fire should be part of job market
-# define struct that is the job market that has rates
-# which are hire and fire
-# keep it simple, have one global job market
-mutable struct JobMarket
-    hire_rate :: Float64
-    fire_rate :: Float64
-end
-end
-
 
 function update_migrant_status!(person, sim)
-     if person.migrant == true
+    # for simplicity, we are not considering return migration
+    # you can only go from non-migrant to migrant status
+    if person.migrant == true
         return
-    end
-    if person.migrant == false
-        if person.contacts.migrant == true && person.contacts.employed >= "friends_employment_rate" && rand() < sim.commr
-#             ...I'd like to check how many of contacts are employed. if greater then a certain amount THEN
-            person.migrant == true
-            person.residence == # lo stesso degli amichetti suoi
+    else
+        # check all of the non-migrants contacts
+        for contact in person.contacts
+            # if the contact is a migrant & employed & they communicate more than random
+            # then the person can become a migrant
+            if contact.migrant == true && contact.employed == true && rand() < sim.commr
+                person.migrant == true
+                # in a more complex version, could do this:
+                # person.residence == contact.residence
+                # for now, settle for random
+                person.residence == rand(person.contacts).residence
+            end
         end
     end
 end
-
 
 
 function update_migrant_employment!(person, sim)
-    if person.employed == true
+    # for simplicity, only change employment status of migrants
+    if person.migrant == false
         return
-    end
-    if person.employed == false
-        if person.contacts.migrant == true && person.contacts.employed == true && person.contacts.industry # are employed in a certain jobmarket with a rate higher than a certain amount THEN
-            if rand()< industry.hire.rate # same industry of his friends
-            person.employed == true
-            person.industry == # same industry of his friends
+    else
+        if person.employed == true
+            # random, for simplicity, but could be empirically determined
+            if rand() < industry.firer
+                person.employed == false
+        else
+            for contact in person.contacts
+                if contact.migrant == true && contact.employed == true
+                    if rand() < industry.hirer
+                        person.employed == true
+                        # a person would be in the same industry as their contact
+                        # person.industry = contact.industry
+                        # but for simplicity:
+                        person.industry == rand(person.contacts).industry
+                    end
+                end
+            end
         end
     end
-    function update_labour_market!()
+end
 end
 
 
+function update!(agent, sim)
+    update_migrant_status!(agent, sim)
+    update_migrant_employment!(agent, sim)
+end
 
 
-    
-    
-function update_migrant_status!(person, sim)
-    # CHANGE ALL OF THIS
-    # now it will be more about residence
-    # no more hiring/firing rate
-    # needs to know about destination countries
-    # how are destination countries selected (select as random to start)
-    # ok, so what happens when a migrant migrates
-    # migrant status
-    # country of residence
-    # anything else?
-    # migration decision means two things:
-    # change the state of the person
-    # change the country
-    # need to think about how to do this
-    
-    # exit out if they are a migrant
-    if person.migrant == true
-        return
-    end
-    # if you get a job then you move?
-    if rand() < sim.hirer
-        person.migrant = true
-        # maybe you don't need the else clause if default is false
-    else
-        person.migrant = false
-    # BUT if you also have contact w/ migrant, then you are more likely
-    # to get a job (for example)
-    if rand(person.contacts).migrant == true && rand() < sim.commr
-        person.migrant = true
+function update_migrants!(sim)
+    # we need to change the order, otherwise agents at the beginning of the 
+    # pop array will behave differently from those further in the back
+    order = shuffle(sim.pop)
+    for p in order
+        update!(p, sim)
     end
 end
 
-# will need this eventually, however, right now this is not a priority
-function update_labour_market!()
+# job acquisition rate
+const HIRER = 0.8
+# job loss rate
+const FIRER = 0.06
+# ^^ should these sum to 1?
+# migration rate
+const MIGR = 0.035
+
+# to scale the rate *slightly* to improve stability
+scale_rate(rate, SCALAR::Float64 = 0.2) = rate + rand() * SCALAR - rand() * SCALAR
+
+function setup_industries!(n, num_jobs, country, HIRER, FIRER)
+    country.industries = [ 
+        Industry(floor(Int, rand() * num_jobs), scale_rate(HIRER), scale_rate(FIRER))
+        for i=1:n ]
 end
 
+function setup_countries(n, num_industries, num_jobs, MIGR, HIRER, FIRER)
+    countries = [ Country(scale_rate(MIGR), []) for i=1:n ]
+    for country in countries
+        setup_industries!(num_industries, num_jobs, country, HIRER, FIRER)
+    end
+    countries
+end
 
-
-## it's easier to implement with  different function for each status
-## wirte what will happen at each timestep and what the change is determined by
-
-## build a population: a vector of population objects and fill with population randomly generated or identical (add to a vector through push!(vector,element).
-## write an update function that modifies the agent a tiny bit in terms of properties -> loop it on all agents
-## go through all agents and one another to a contact list  (something like: 
-# for j in i+1:length(pop)
-#             if rand() < p_contact
-#                 push!(pop[i].contacts, pop[j])
-#                 push!(pop[j].contacts, pop[i])
-# end
-
-# visually, picture red circles on the left as natives who can migrate
-# and blue circles on the right as people who have already migrated
-# these are our two starting populations
-function setup_population(n, p_contact)
-    pop = [ ComplexHuman() for i=1:n ]
-    # go through all combinations of agents and
-    # check if they are connected
+# if we skip the `if rand() < p_contact` line,
+# all connections will be in eachother connections list 
+# we could try to make a country-level probability contact
+# but it should be placed into the country struct then in the setup_coutry f'n
+# like `p_contact = rand()` and then loop somehow through it
+# would loop through the people and see if they are connected
+function setup_pop(n, countries)
+    # could slice up the population per country, but that's more complicated
+    # maybe have to add something similar for industry
+    pop = [ ComplexHuman(rand(countries)) for i=1:n ]
     for i in eachindex(pop)
+        # randomly choose an industry
+        pop[i].industry = rand(pop[i].residence.industries)
         for j in i+1:length(pop)
-            if rand() < p_contact
-                push!(pop[i].contacts, pop[j]) #this should turn into a for loop for each country
+            if pop[i].origin == pop[j].origin
+                push!(pop[i].contacts, pop[j])
                 push!(pop[j].contacts, pop[i])
             end
         end
@@ -173,17 +154,55 @@ function setup_population(n, p_contact)
     pop
 end
 
-# need a setup
-# create labour markets
-# population
-# all countries
-# assign agents to countries
-# assign properties to agents
-# assign properties to countries
-# add contacts to agents
-# return the simulation object
-# then the global update function (this will call all necessary updat f'ns)
-# need run function, this will print interesting information (relevant output?)
-# ignore spatial structure, create a mixed population
-# take N (number) of random agents as contacts
-#test from git in jupyter
+function  setup_sim(;commr, N, num_jobs, num_industries, num_countries, seed)
+    # for reproducibility
+    Random.seed!(seed)
+    
+    # create our countries
+    # within each country a number of industries are created
+    countries = setup_countries(num_countries, num_industries, num_jobs, MIGR, HIRER, FIRER)
+    @assert countries != nothing
+    
+    # create a population of agents
+    pop = setup_pop(N, countries)
+
+    # create a simulation object with parameter values
+    sim = Simulation(countries, commr, pop)
+
+end
+
+function run_sim(sim, n_steps, verbose = true)
+    # we keep track of the numbers
+    n_non_migrants = Int[]
+    n_migrants = Int[]
+    # add dataframe for unemployed, employed, industry, etc.
+    # could use an array of arrays, depends on what we want to plot
+    # for the google
+    # could also produce data files as outputs
+    # arg = open(file_name, 'w')
+    # println(arg, stuff-to-write)
+    # within notebook, open file.jl
+    # use f'n include(), which reads julia code and executes
+    # run f'n w/ a couple args, get the data
+    # use notebook for displaying results
+
+    # simulation steps
+    for t in 1:n_steps
+        update_migrants!(sim)
+        push!(n_migrants, count(p -> p.migrant == true, sim.pop))
+        push!(n_non_migrants, count(p -> p.migrant == false, sim.pop))
+        # a bit of output
+        if verbose
+            println(t, ", ", n_migrants[end], ", ", n_non_migrants[end])
+        end
+    end
+    
+    # return the results (normalized by pop size)
+    n = length(sim.pop)
+    n_migrants./n, n_non_migrants./n
+end
+
+sim = setup_sim(commr=0.2, N=1000, num_jobs=800, num_industries=10, num_countries=5, seed=42)
+migrants, non_migrants = run_sim(sim, 500)
+
+Plots.plot([migrants, non_migrants], labels = ["Migrants" "Non-Migrants"])
