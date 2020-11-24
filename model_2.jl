@@ -151,7 +151,7 @@ function setup_pop(n, num_countries)
                 push!(pop[j].contacts, pop[i])
             end
         end
-        for i in lenght(pop)
+        for i in eachindex(pop)
         pop[i].residence == rand(num_countries)
         end
     end
@@ -174,7 +174,7 @@ function  setup_sim(;commr, N, num_jobs, num_industries, num_countries, seed)
     
     # create a population of agents
     pop = setup_pop(N, countries) #should we change setup_pop coherently to work with countires..right?
-    pop = pop_to_countries(pop, countries)
+#     pop = pop_to_countries(pop, countries)
 
     # create a simulation object with parameter values
     sim = Simulation(countries, commr, pop)
