@@ -178,7 +178,7 @@ function  setup_sim(;commr, N, num_jobs, num_industries, num_countries, seed)
 end
 
 
-function run_sim(sim, n_steps, verbose = true)
+function run_sim(sim, n_steps, verbose = false)
     # we keep track of the numbers
     output = DataFrame(status = [], country = [], employed = [], industry=[])
     # simulation steps
@@ -198,5 +198,5 @@ end
 
 sim = setup_sim(commr=0.2, N=1000, num_jobs=800, num_industries=10, num_countries=5, seed=42)
 output = run_sim(sim, 10)
-# CSV.write("C:/Users/panze/Desktop/output.csv", output)
+CSV.write("C:/Users/scharlottej13/Desktop/output.csv", output)
 # Plots.plot([migrants, non_migrants], labels = ["Migrants" "Non-Migrants"])
