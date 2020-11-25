@@ -152,7 +152,7 @@ function setup_pop(n, num_countries)
             end
         end
         for i in eachindex(pop)
-        pop[i].residence == rand(num_countries)
+        pop[i].residence == floor(Int, rand(num_countries))
         end
     end
     pop
@@ -165,7 +165,7 @@ function  setup_sim(;commr, N, num_jobs, num_industries, num_countries, seed)
     Random.seed!(seed)
 
     # create a population of agents
-    pop = setup_pop(N)
+#     pop = setup_pop(N)
     
     # create our countries
     # within each country a number of industries are created
@@ -173,7 +173,7 @@ function  setup_sim(;commr, N, num_jobs, num_industries, num_countries, seed)
     @assert countries != nothing
     
     # create a population of agents
-    pop = setup_pop(N, countries) #should we change setup_pop coherently to work with countires..right?
+    pop = setup_pop(N, num_countries) #should we change setup_pop coherently to work with countires..right?
 #     pop = pop_to_countries(pop, countries)
 
     # create a simulation object with parameter values
@@ -203,7 +203,7 @@ function run_sim(sim, n_steps, verbose = true)
         update_migrants!(sim)
 #         push!(n_migrants, count(p -> p.migrant == true, sim.pop))
 #         push!(n_non_migrants, count(p -> p.migrant == false, sim.pop))
-        for p in pop
+        for p in sim.pop
             push!(output, (pop[p].migrant, pop[p].residence,pop[p].employed, pop[p].industry))
         # a bit of output
         if verbose
