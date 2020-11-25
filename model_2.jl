@@ -187,14 +187,14 @@ function run_sim(sim, n_steps, verbose = true)
             # push!(output, (pop[p].migrant, pop[p].residence,pop[p].employed, pop[p].industry))
         # a bit of output
         if verbose
-            println(t, ", ", n_migrants[end], ", ", n_non_migrants[end])
+            # println(t, ", ", n_migrants[end], ", ", n_non_migrants[end])
             end
         end
     end
        
     # return the results (normalized by pop size)
     n = length(sim.pop)
-    n_migrants./n, n_non_migrants./n
+    # n_migrants./n, n_non_migrants./n
 end
 
 
