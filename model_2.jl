@@ -1,8 +1,8 @@
 using Random
-using Plots
-using DataFrames
-using CSV
-using StatsPlots
+# using Plots
+# using DataFrames
+# using CSV
+# using StatsPlots
 
 mutable struct Industry
     # number of jobs available
@@ -17,12 +17,12 @@ end
 Industry() = Industry(0,0,0)
 
 mutable struct Country
+    name :: Int
     migration_rate :: Float64
     industries :: Vector{Industry}
 end
 
-# no one migrates, no industries
-Country() = Country(0,[])
+Country() = Country(0, 0, [])
 
 mutable struct ComplexHuman
     migrant :: Bool
@@ -126,15 +126,12 @@ function setup_industries!(n, num_jobs, country, HIRER, FIRER)
 end
 
 function setup_countries(n, num_industries, num_jobs, MIGR, HIRER, FIRER)
-    countries = [ Country(scale_rate(MIGR), []) for i=1:n ]
+    countries = [ Country(i, scale_rate(MIGR), []) for i=1:n ]
     for country in countries
         setup_industries!(num_industries, num_jobs, country, HIRER, FIRER)
     end
     countries
 end
-
-# trying to debug, there's something wront w/ setup_countries I think
-setup_countries(5, 10, 50, MIGR, HIRER, FIRER)
 
 # if we skip the `if rand() < p_contact` line,
 # all connections will be in eachother connections list 
@@ -142,7 +139,7 @@ setup_countries(5, 10, 50, MIGR, HIRER, FIRER)
 # but it should be placed into the country struct then in the setup_coutry f'n
 # like `p_contact = rand()` and then loop somehow through it
 # would loop through the people and see if they are connected
-function setup_pop(n, num_countries)
+function setup_pop(n, countries)
     pop = [ ComplexHuman() for i=1:n ]
     for i in eachindex(pop)
         for j in i+1:length(pop)
@@ -152,59 +149,42 @@ function setup_pop(n, num_countries)
             end
         end
         for i in eachindex(pop)
-        pop[i].residence == rand(num_countries)
+            pop[i].residence == countries[rand(1: size(countries)[1])].name
         end
     end
     pop
 end
-setup_pop()= setup_pop(0,0) #no one exists, no countries. Basically Pangaea.
-setup_pop(N) = setup_pop(0,0)
+
 
 function  setup_sim(;commr, N, num_jobs, num_industries, num_countries, seed)
     # for reproducibility
     Random.seed!(seed)
-
-    # create a population of agents
-    pop = setup_pop(N)
     
     # create our countries
     # within each country a number of industries are created
     countries = setup_countries(num_countries, num_industries, num_jobs, MIGR, HIRER, FIRER)
     @assert countries != nothing
     
+    # debugging output
+    println(countries[rand(1: size(countries)[1])].name)
+    
     # create a population of agents
-    pop = setup_pop(N, countries) #should we change setup_pop coherently to work with countires..right?
-#     pop = pop_to_countries(pop, countries)
+    pop = setup_pop(N, countries)
 
     # create a simulation object with parameter values
     sim = Simulation(countries, commr, pop)
 
 end
 
-output = DataFrame(status = [], country = [],employed = [], industry=[])
 
 function run_sim(sim, n_steps, verbose = true)
     # we keep track of the numbers
-#     n_non_migrants = Int[]
-#     n_migrants = Int[]
-    # add dataframe for unemployed, employed, industry, etc.
-    # could use an array of arrays, depends on what we want to plot
-    # for the google
-    # could also produce data files as outputs
-    # arg = open(file_name, 'w')
-    # println(arg, stuff-to-write)
-    # within notebook, open file.jl
-    # use f'n include(), which reads julia code and executes
-    # run f'n w/ a couple args, get the data
-    # use notebook for displaying results
-
+    # output = DataFrame(status = [], country = [],employed = [], industry=[])
     # simulation steps
     for t in 1:n_steps
         update_migrants!(sim)
-#         push!(n_migrants, count(p -> p.migrant == true, sim.pop))
-#         push!(n_non_migrants, count(p -> p.migrant == false, sim.pop))
         for p in pop
-            push!(output, (pop[p].migrant, pop[p].residence,pop[p].employed, pop[p].industry))
+            # push!(output, (pop[p].migrant, pop[p].residence,pop[p].employed, pop[p].industry))
         # a bit of output
         if verbose
             println(t, ", ", n_migrants[end], ", ", n_non_migrants[end])
@@ -217,11 +197,8 @@ function run_sim(sim, n_steps, verbose = true)
     n_migrants./n, n_non_migrants./n
 end
 
-# setup_sim(;commr, N, num_jobs, num_industries, num_countries, seed)
-# setup_pop(n, num_countries)
-
 
 sim = setup_sim(commr=0.2, N=1000, num_jobs=800, num_industries=10, num_countries=5, seed=42)
 migrants, non_migrants = run_sim(sim, 500)
-CSV.write("C:/Users/panze/Desktop/output.csv", output)
+# CSV.write("C:/Users/panze/Desktop/output.csv", output)
 # Plots.plot([migrants, non_migrants], labels = ["Migrants" "Non-Migrants"])
