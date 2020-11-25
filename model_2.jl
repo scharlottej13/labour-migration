@@ -183,7 +183,7 @@ function run_sim(sim, n_steps, verbose = true)
     # simulation steps
     for t in 1:n_steps
         update_migrants!(sim)
-        for p in pop
+        for p in sim.pop
             # push!(output, (pop[p].migrant, pop[p].residence,pop[p].employed, pop[p].industry))
         # a bit of output
         if verbose
