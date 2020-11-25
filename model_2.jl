@@ -1,8 +1,8 @@
 using Random
-# using Plots
-# using DataFrames
-# using CSV
-# using StatsPlots
+using Plots
+using DataFrames
+using CSV
+using StatsPlots
 
 mutable struct Industry
     # number of jobs available
@@ -179,26 +179,23 @@ end
 
 function run_sim(sim, n_steps, verbose = true)
     # we keep track of the numbers
-    # output = DataFrame(status = [], country = [],employed = [], industry=[])
+    output = DataFrame(status = [], country = [],employed = [], industry=[])
     # simulation steps
     for t in 1:n_steps
         update_migrants!(sim)
         for p in sim.pop
-            # push!(output, (pop[p].migrant, pop[p].residence,pop[p].employed, pop[p].industry))
+            push!(output, (pop[p].migrant, pop[p].residence,pop[p].employed, pop[p].industry))
         # a bit of output
         if verbose
-            # println(t, ", ", n_migrants[end], ", ", n_non_migrants[end])
+            println(output)
             end
         end
     end
-       
-    # return the results (normalized by pop size)
-    n = length(sim.pop)
-    # n_migrants./n, n_non_migrants./n
+    output
 end
 
 
 sim = setup_sim(commr=0.2, N=1000, num_jobs=800, num_industries=10, num_countries=5, seed=42)
-migrants, non_migrants = run_sim(sim, 500)
+output = run_sim(sim, 500)
 # CSV.write("C:/Users/panze/Desktop/output.csv", output)
 # Plots.plot([migrants, non_migrants], labels = ["Migrants" "Non-Migrants"])
