@@ -165,9 +165,6 @@ function  setup_sim(;commr, N, num_jobs, num_industries, num_countries, seed)
     countries = setup_countries(num_countries, num_industries, num_jobs, MIGR, HIRER, FIRER)
     @assert countries != nothing
     
-    # debugging output
-    println(countries[rand(1: size(countries)[1])].name)
-    
     # create a population of agents
     pop = setup_pop(N, countries)
 
@@ -196,6 +193,6 @@ end
 
 
 sim = setup_sim(commr=0.2, N=1000, num_jobs=800, num_industries=10, num_countries=5, seed=42)
-output = run_sim(sim, 500)
+output = run_sim(sim, 10)
 # CSV.write("C:/Users/panze/Desktop/output.csv", output)
 # Plots.plot([migrants, non_migrants], labels = ["Migrants" "Non-Migrants"])
