@@ -198,5 +198,6 @@ end
 
 sim = setup_sim(commr=0.2, N=1000, num_jobs=800, num_industries=10, num_countries=5, seed=42)
 output = run_sim(sim, 10)
-CSV.write("/Users/scharlottej13/Desktop/output.csv", output)
+CSV.write("C:/Users/panze/Desktop/output.csv", output)
+# CSV.write("/Users/scharlottej13/Desktop/output.csv", output)
 # Plots.plot([migrants, non_migrants], labels = ["Migrants" "Non-Migrants"])
