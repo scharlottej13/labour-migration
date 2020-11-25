@@ -157,6 +157,10 @@ end
 
 
 function  setup_sim(;commr, N, num_jobs, num_industries, num_countries, seed)
+    println("Starting simulation with ", N, " people.")
+    println("There are ", num_countries, " countries")
+    println(num_industries, " industries and ", num_jobs, " jobs.")
+
     # for reproducibility
     Random.seed!(seed)
     
@@ -176,15 +180,15 @@ end
 
 function run_sim(sim, n_steps, verbose = true)
     # we keep track of the numbers
-    output = DataFrame(status = [], country = [],employed = [], industry=[])
+    output = DataFrame(status = [], country = [], employed = [], industry=[])
     # simulation steps
     for t in 1:n_steps
         update_migrants!(sim)
         for p in sim.pop
-            push!(output, (pop[p].migrant, pop[p].residence,pop[p].employed, pop[p].industry))
-        # a bit of output
-        if verbose
-            println(output)
+            push!(output, (p.migrant, p.residence, p.employed, p.industry))
+            # a bit of output
+            if verbose
+                println(output)
             end
         end
     end
