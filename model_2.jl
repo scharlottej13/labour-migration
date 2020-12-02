@@ -149,7 +149,7 @@ function setup_pop(n, countries)
             end
         end
         for i in eachindex(pop)
-            pop[i].residence == countries[rand(1: size(countries)[1])].name
+            pop[i].residence == countries[rand(1: size(countries)[1])].name #there is a much easier way to accomplish what you want to do, by picking directly from the list of countries instead of first picking a random index (which I assume is what you are trying to do).
         end
     end
     pop
