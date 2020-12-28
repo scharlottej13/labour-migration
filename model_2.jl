@@ -139,8 +139,10 @@ end
 # but it should be placed into the country struct then in the setup_coutry f'n
 # like `p_contact = rand()` and then loop somehow through it
 # would loop through the people and see if they are connected
-function setup_pop(n, countries)
+function setup_pop(n, countries, num_industries)
     pop = [ ComplexHuman() for i=1:n ]
+    industries = [ i for i=1:num_industries ]
+
     for i in eachindex(pop)
         for j in i+1:length(pop)
             if pop[i].origin == pop[j].origin
@@ -150,6 +152,7 @@ function setup_pop(n, countries)
         end
         for i in eachindex(pop)
             pop[i].residence = rand(countries) #there is a much easier way to accomplish what you want to do, by picking directly from the list of countries instead of first picking a random index
+            pop[i].industry = rand(industries)
         end
     end
     pop
@@ -170,7 +173,7 @@ function  setup_sim(;commr, N, num_jobs, num_industries, num_countries, seed)
     @assert countries != nothing
     
     # create a population of agents
-    pop = setup_pop(N, countries)
+    pop = setup_pop(N, countries, num_industries)
 
     # create a simulation object with parameter values
     sim = Simulation(countries, commr, pop)
