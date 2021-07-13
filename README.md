@@ -1,5 +1,5 @@
 # labour-migration
-Project for agent-based modeling course for social scientists with University of Southampton
+Project for agent-based modeling course for social scientists with University of Southampton. [This file] (model_2.jl) runs the developed ABM.
 
 
 ## Migration and labour market
